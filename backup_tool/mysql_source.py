@@ -22,8 +22,13 @@ class MySQLSource:
     CSV、ZIP、S3への出力は担当しない。
     """
 
-    def __init__(self, config: MySQLConfig) -> None:
+    def __init__(
+            self,
+            config: MySQLConfig,
+            is_debug: bool,
+        ) -> None:
         self._config = config
+        self._is_debug = is_debug
         self._connection: MySQLConnection | None = None
 
     @property
@@ -136,8 +141,49 @@ class MySQLSource:
         Returns:
             CREATE TABLE文。
         """
-        # TODO: SHOW CREATE TABLE を使って実装してください
-        pass
+        connection = self._require_connection()
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute(f"SHOW CREATE TABLE {table_name};")
+            s = cursor.fetchall()
+            return s
+        finally:
+            cursor.close()
+
+    def get_columns(
+        self,
+        table_name: str,
+    ) -> list[str]:
+        """
+        DESCRIBE結果をすべて返す
+        """
+        connection = self._require_connection()
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute(f"DESCRIBE {table_name};")
+            s = cursor.fetchall()
+            return s
+        finally:
+            cursor.close()
+
+    def get_column_types(
+        self,
+        table_name: str,
+    ) -> list[str]:
+        """
+        DESCRIBEから型のみ取得
+        """
+        connection = self._require_connection()
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute(f"DESCRIBE {table_name};")
+            s = [column[1] for column in cursor.fetchall()]
+            return s
+        finally:
+            cursor.close()
 
     def get_column_names(
         self,
@@ -149,8 +195,16 @@ class MySQLSource:
         この段階では型情報の完全な復元には使用せず、
         CSVヘッダー候補となるカラム名だけを取得する。
         """
-        # TODO: SELECT * FROM table LIMIT 0 を使って実装してください
-        pass
+
+        connection = self._require_connection()
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute(f"DESCRIBE {table_name};")
+            s = [column[0] for column in cursor.fetchall()]
+            return s
+        finally:
+            cursor.close()
 
     def iter_row_batches(
         self,
@@ -171,8 +225,17 @@ class MySQLSource:
         Yields:
             行データのリスト。
         """
-        # TODO: SELECT * FROM table を使って実装してください
-        pass
+
+        connection = self._require_connection()
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute(f"SELECT * FROM {table_name};")
+            s = cursor.fetchall()
+            return s
+        finally:
+            cursor.close()
+
 
     def count_rows(self, table_name: str) -> int:
         """
@@ -273,6 +336,11 @@ class MySQLSource:
         # TODO: INFORMATION_SCHEMA.KEY_COLUMN_USAGE を使って実装してください
         pass
 
-    @classmethod
+
+    def debug(self, s):
+        if self._is_debug:
+            print(s)
+
+
     def do_output():
         print()

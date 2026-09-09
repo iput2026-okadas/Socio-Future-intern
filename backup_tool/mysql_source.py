@@ -272,3 +272,7 @@ class MySQLSource:
         """
         # TODO: INFORMATION_SCHEMA.KEY_COLUMN_USAGE を使って実装してください
         pass
+
+    @classmethod
+    def do_output():
+        print()

@@ -336,6 +336,7 @@ class MySQLSource:
         # TODO: INFORMATION_SCHEMA.KEY_COLUMN_USAGE を使って実装してください
         pass
 
+<<<<<<< HEAD
 
     def debug(self, s):
         if self._is_debug:
@@ -344,3 +345,6 @@ class MySQLSource:
 
     def do_output():
         print()
+=======
+ 
+>>>>>>> 610a7ac4ccc7394caf64dd52f7c2a4e165a03ae5

@@ -5,7 +5,6 @@ __pycache__/
 .pytest_cache/
 .vscode/
 .idea/
-backup-output/
 backup.zip
 backup-verify/
 streaming-zip-test.zip

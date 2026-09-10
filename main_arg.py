@@ -9,23 +9,25 @@ from backup_tool.config import load_mysql_config
 from backup_tool.output_sql import SchemaExport
 
 # command example below
-# python .\main_arg.py backup_test -schema -db-password aaaa
+# python .\main_arg.py -schema -output-types csv -settings-path settings.env
 
 def main():
     # definitions
-    requirements = [ # name, description
-        ["db_name", "target database name"],
-    ]
+    #requirements = [ # name, description
+        #["db_name", "target database name"],
+    #]
     flags = [ # name, description
         ["-debug", "show debug massages"],
         ["-schema", "output schema with data"],
         ["-schema-no-data", "output schema with only structure info"],
+        ["-zip", "output in zipping"],
+        ["-s3", "output into s3 (settings.env required)"],
     ]
     options = [ # name, default value, number of arg, description
-        ["-db-password", "", None, ""],
-        ["-output-types", "csv", "+", ""],
-        ["-output-name", "output", None, ""],
-        ["-settings-path", ".env", None, ""],
+        #["-db-password", "", None, "password of your database"],
+        ["-output-types", "csv", "+", "one or several plain file types you want \nby default: csv \ncan be: csv"],
+        ["-directory", "./backup", None, "directory you wanna backup into \nby default: backup"],
+        ["-settings-path", "settings.env", None, "you can set options via settings.env (or just you name it)"],
     ]
 
 
@@ -33,21 +35,18 @@ def main():
     parser = argparse.ArgumentParser(
         description="""
 mysql backup tool
-descriptions
-descriptions
-descriptions""",
+set some parameters like sql password, host or database name via settings.env
+""",
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    reqs_group = parser.add_argument_group("requirements")
     flags_group = parser.add_argument_group("flags")
 
 
-    for requirement in requirements:
-        parser.add_argument(
-            requirement[0],
-            help= requirement[1],
-            
-        )
+    #for requirement in requirements:
+    #    parser.add_argument(
+    #        requirement[0],
+    #        help= requirement[1],
+    #    )
     for flag in flags:
         flags_group.add_argument(
             flag[0],
@@ -64,14 +63,10 @@ descriptions""",
 
     args = parser.parse_args()
 
-    print(args)
-
 
     # process
     work: list[MySQLSource] = []
 
-    database_name = args.db_name
-    password = args.db_password
     config = load_mysql_config(
         setting_file_path=args.settings_path
     )
@@ -100,9 +95,11 @@ descriptions""",
         for p in plain:
             match p:
                 case "csv" | ".csv":
-                    print("csv")
-                case "txt" | ".txt":
-                    print("txt")
+                    # TODO implement csv process here
+                    pass
+                #case "txt" | ".txt":
+                    # TODO implement txt process here
+                #    pass
                 case _:
                     print("error: invalid value on output types")
     else:
@@ -111,10 +108,14 @@ descriptions""",
 
 
     # any work's element executed here
-
     n = cpu_count()
     with Pool(processes=n) as p:
         results = p.map(func, work)
+
+    if args.zip:
+        # TODO zip function here
+        pass
+    
 
 def func(w: MySQLSource):
     w.do_output()

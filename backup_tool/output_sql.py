@@ -10,15 +10,11 @@ class SchemaExport(MySQLSource):
 
     def __init__(
             self,
-            database_name: str,
-            password: str,
             config,
             is_debug,
             no_data=False,
         ):
         super().__init__(
-            database_name,
-            password,
             config,
             is_debug,
         )
@@ -44,25 +40,26 @@ class SchemaExport(MySQLSource):
 
                 self.debug(column_types := self.get_column_types(s))
 
-                
                 if not self.no_data:
                     f.write(f"LOCK TABLES {s} WRITE;\n")
-                    for it in self.iter_row_batches(s):
-                        insert = f"INSERT INTO {s} VALUES("
+                    for raw_iter in self.iter_row_batches(s):
+                        self.debug(raw_iter)
+                        for it in raw_iter:
+                            insert = f"INSERT INTO {s} VALUES("
 
-                        for index, i in enumerate(it):
-                            if i == None:
-                                insert = insert + "NULL"
-                            elif isinstance(i, (int, float, bytes, bytearray, Decimal)):
-                                insert = insert + str(i)
-                            elif isinstance(i, (datetime, date, time, timedelta)):
-                                insert = insert + "\'" + str(i) + "\'"
-                            else:
-                                insert = insert + repr(i)
+                            for index, i in enumerate(it):
+                                if i == None:
+                                    insert = insert + "NULL"
+                                elif isinstance(i, (int, float, bytes, bytearray, Decimal)):
+                                    insert = insert + str(i)
+                                elif isinstance(i, (datetime, date, time, timedelta)):
+                                    insert = insert + "\'" + str(i) + "\'"
+                                else:
+                                    insert = insert + repr(i)
 
-                            if not index == len(it) - 1:
-                                insert = insert + ","
-                        insert = insert + ");\n"
+                                if not index == len(it) - 1:
+                                    insert = insert + ","
+                            insert = insert + ");\n"
 
                         f.write(insert)
                     f.write(f"UNLOCK TABLES;\n")

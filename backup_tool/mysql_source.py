@@ -24,14 +24,10 @@ class MySQLSource:
 
     def __init__(
             self,
-            database_name: str,
-            password: str,
             config: MySQLConfig,
             is_debug: bool,
         ) -> None:
         self._config = config
-        self._database_name = database_name
-        self._password = password
         self._is_debug = is_debug
         self._connection: MySQLConnection | None = None
 
@@ -50,8 +46,8 @@ class MySQLSource:
                 host=self._config.host,
                 port=self._config.port,
                 user=self._config.user,
-                password=self._password,
-                database=self._database_name,
+                password=self._config.password,
+                database=self._config.database,
                 charset="utf8mb4",
                 use_unicode=True,
                 autocommit=False,
@@ -218,7 +214,7 @@ class MySQLSource:
     def iter_row_batches(
         self,
         table_name: str,
-        batch_size: int | None = None,
+        batch_size: int = 0,
     ) -> Iterator[RowBatch]:
         """
         指定テーブルのデータを一定件数ずつ取得する。
@@ -238,10 +234,16 @@ class MySQLSource:
         connection = self._require_connection()
         cursor = connection.cursor()
 
+        if batch_size == 0:
+            batch_size = self._config.batch_size
+            
         try:
             cursor.execute(f"SELECT * FROM {table_name};")
-            s = cursor.fetchall()
-            return s
+
+            while True:
+                batch = cursor.fetchmany(batch_size)
+                if not batch: break
+                yield batch
         finally:
             cursor.close()
 

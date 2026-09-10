@@ -18,14 +18,16 @@ class MySQLConfig:
     batch_size: int = 1000
 
 
-def load_mysql_config() -> MySQLConfig:
+def load_mysql_config(
+        setting_file_path: str = ".env"
+) -> MySQLConfig:
     """
     .envまたは環境変数からMySQL接続設定を読み込む。
 
     Raises:
         ValueError: 必須の環境変数が未設定、または数値設定が不正な場合。
     """
-    load_dotenv()
+    load_dotenv(dotenv_path=setting_file_path)
 
     required_names = [
         "MYSQL_HOST",

@@ -25,6 +25,7 @@ def main():
         ["-db-password", "", None, ""],
         ["-output-types", "csv", "+", ""],
         ["-output-name", "output", None, ""],
+        ["-settings-path", ".env", None, ""],
     ]
 
 
@@ -71,21 +72,19 @@ descriptions""",
 
     database_name = args.db_name
     password = args.db_password
-    config = load_mysql_config()
+    config = load_mysql_config(
+        setting_file_path=args.settings_path
+    )
     is_debug = args.debug
     
     if args.schema:
         schema_work = SchemaExport(
-            database_name=database_name,
-            password=password,
             config=config,
             is_debug=is_debug,
         )
         work.append(schema_work)
     elif args.schema_no_data:
         schema_work = SchemaExport(
-            database_name=database_name,
-            password=password,
             config=config,
             is_debug=is_debug,
             no_data=True,

@@ -4,22 +4,9 @@
         "users",
         "users_sample"
     ],
-    "tables": [
-        {
-            "table_name": "orders",
-            "row_count": 2
-        },
-        {
-            "table_name": "users",
-            "row_count": 7
-        },
-        {
-            "table_name": "users_sample",
-            "row_count": 0
-        }
-    ],
-    "バックアップ日時:": "2026-09-10 13:56:40",
-    "MySQL Version": "MySQL Version: 8.0.46",
+    "tables": [],
+    "バックアップ日時:": "2026-09-10 16:47:46",
+    "MySQL Version": "MySQL Version: ",
     "ファイルサイズ": {
         "orders.csv": "92 bytes",
         "users.csv": "274 bytes",

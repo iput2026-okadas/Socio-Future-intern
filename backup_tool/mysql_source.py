@@ -24,10 +24,14 @@ class MySQLSource:
 
     def __init__(
             self,
+            database_name: str,
+            password: str,
             config: MySQLConfig,
             is_debug: bool,
         ) -> None:
         self._config = config
+        self._database_name = database_name
+        self._password = password
         self._is_debug = is_debug
         self._connection: MySQLConnection | None = None
 
@@ -41,16 +45,20 @@ class MySQLSource:
         if self._connection is not None:
             return
 
-        self._connection = mysql.connector.connect(
-            host=self._config.host,
-            port=self._config.port,
-            user=self._config.user,
-            password=self._config.password,
-            database=self._config.database,
-            charset="utf8mb4",
-            use_unicode=True,
-            autocommit=False,
-        )
+        try:
+            self._connection = mysql.connector.connect(
+                host=self._config.host,
+                port=self._config.port,
+                user=self._config.user,
+                password=self._password,
+                database=self._database_name,
+                charset="utf8mb4",
+                use_unicode=True,
+                autocommit=False,
+            )
+        except Exception as e:
+            print(e)
+
 
     def close(self) -> None:
         """MySQL接続を閉じる。"""
@@ -164,6 +172,7 @@ class MySQLSource:
         try:
             cursor.execute(f"DESCRIBE {table_name};")
             s = cursor.fetchall()
+            #s = cursor.fetchmany()
             return s
         finally:
             cursor.close()

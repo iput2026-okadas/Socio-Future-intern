@@ -77,7 +77,7 @@ set some parameters such as sql password, host or database name via settings.env
     match args.mode:
         case "backup": pass
         case "generate":
-            os.makedirs(".mysql-backup", exist_ok=True)
+            os.makedirs(".mysql-backup/", exist_ok=True)
             with open(
                 f".mysql-backup/settings.env",
                 "w", encoding="utf-8"

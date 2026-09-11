@@ -1,0 +1,23 @@
+{
+    "テーブルリスト": [
+        "orders",
+        "users",
+        "users_sample"
+    ],
+    "tables": [],
+    "バックアップ日時:": "2026-09-11 10:20:48",
+    "MySQL Version": "MySQL Version: ",
+    "ファイルサイズ": {
+        "orders.csv": "92 bytes",
+        "users.csv": "274 bytes",
+        "users_sample.csv": "16 bytes"
+    },
+    "データベース一覧": [
+        "backup_test",
+        "information_schema",
+        "mysql",
+        "performance_schema",
+        "sample_db",
+        "sys"
+    ]
+}

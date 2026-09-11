@@ -30,7 +30,7 @@ def main():
         ["-db-tables", "", "+", "one or several specific table name you wanna backup"],
         ["-output-types", "csv", "+", "one or several plain file types you want \nby default: csv \ncan be: csv"],
         ["-directory", "./backup", None, "directory you wanna backup into \nby default: backup"],
-        ["-settings-path", "settings.env", None, "you can set options via settings.env (or just you name it)"],
+        ["-settings-path", ".mysql-backup/settings.env", None, "you can set options via settings.env (or just you name it)"],
     ]
 
 

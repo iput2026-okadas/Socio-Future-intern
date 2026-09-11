@@ -14,4 +14,4 @@ s3-backup-test.zip
 s3-backup-verify/
 backup-all/
 selected.zip
-users-only.zip
+.mysql-backup

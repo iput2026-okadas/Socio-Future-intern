@@ -92,7 +92,12 @@ MYSQL_DATABASE=
 AWS_PROFILE=
 S3_REGION=
 S3_BUCKET=
-""")
+""")   
+            with open(
+                ".gitignore",
+                "a", encoding="utf-8"
+            ) as gi:
+                gi.writelines(".mysql-backup")
 
             return None
         case "restore":

@@ -2,6 +2,7 @@
 # libraries
 import argparse
 from multiprocessing import Pool, cpu_count
+import os
 #import time
 
 # self-implementations
@@ -14,9 +15,9 @@ from backup_tool.output_sql import SchemaExport
 
 def main():
 # definitions
-    #requirements = [ # name, description
-        #["db_name", "target database name"],
-    #]
+    requirements = [ # name, default, description
+        ["mode", "backup",  "select mode from backup / generate restore"],
+    ]
     flags = [ # name, description
         ["-debug", "show debug massages"],
         ["-schema", "output schema with data"],
@@ -36,7 +37,11 @@ def main():
 # initializes
     parser = argparse.ArgumentParser(
         description="""
-mysql backup tool
+mysql-backup tool
+usage:
+    -generate: generates settings.env with format
+    -backup: backup all or specific data / schema into specific format
+    -restore: restore data / schema from backuped files
 set some parameters such as sql password, host or database name via settings.env
 """,
         formatter_class=argparse.RawTextHelpFormatter,
@@ -44,11 +49,13 @@ set some parameters such as sql password, host or database name via settings.env
     flags_group = parser.add_argument_group("flags")
 
 
-    #for requirement in requirements:
-    #    parser.add_argument(
-    #        requirement[0],
-    #        help= requirement[1],
-    #    )
+    for requirement in requirements:
+        parser.add_argument(
+            requirement[0],
+            default=requirement[1],
+            help= requirement[2],
+            nargs='?',
+        )
     for flag in flags:
         flags_group.add_argument(
             flag[0],
@@ -67,6 +74,35 @@ set some parameters such as sql password, host or database name via settings.env
 
 
 # processes
+    match args.mode:
+        case "backup": pass
+        case "generate":
+            os.makedirs(".mysql-backup", exist_ok=True)
+            with open(
+                f".mysql-backup/settings.env",
+                "w", encoding="utf-8"
+            ) as f:
+                f.write("""
+MYSQL_HOST=
+MYSQL_PORT=
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_DATABASE=
+
+AWS_PROFILE=
+S3_REGION=
+S3_BUCKET=
+""")
+
+            return None
+        case "restore":
+            # TODO restore function here
+            pass
+        case _:
+            print("Invalid mode option")
+            return None
+
+    #backup
     is_debug = args.debug
     config = load_mysql_config(
         setting_file_path=args.settings_path,

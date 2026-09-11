@@ -16,10 +16,12 @@ class MySQLConfig:
     password: str
     database: str
     batch_size: int = 1000
+    is_debug: bool = False
 
 
 def load_mysql_config(
-        setting_file_path: str = ".env"
+        setting_file_path: str = ".env",
+        is_debug: bool = False,
 ) -> MySQLConfig:
     """
     .envまたは環境変数からMySQL接続設定を読み込む。
@@ -77,6 +79,7 @@ def load_mysql_config(
         password=os.environ["MYSQL_PASSWORD"],
         database=os.environ["MYSQL_DATABASE"],
         batch_size=batch_size,
+        is_debug=is_debug,
     )
 
 @dataclass(frozen=True)

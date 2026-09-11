@@ -25,10 +25,9 @@ class MySQLSource:
     def __init__(
             self,
             config: MySQLConfig,
-            is_debug: bool,
         ) -> None:
         self._config = config
-        self._is_debug = is_debug
+        self._is_debug = config.is_debug
         self._connection: MySQLConnection | None = None
 
     @property
@@ -349,9 +348,19 @@ class MySQLSource:
 
 
     def debug(self, s):
+        """
+        can fire if is_debug flag raises\n
+        must contain non must-print() things
+        """ 
         if self._is_debug:
             print(s)
 
 
     def do_output():
+        """
+        supposed to be called in multiprocessing on main code\n
+        make inheritance class for any output target and give this function specific process\n
+        should recieve 1 table name or any target own pramater\n
+        not to try call connect()/close() -- main function call them
+        """
         print()
